@@ -1,4 +1,4 @@
-"""Adds config flow for Blueprint."""
+"""Adds config flow for Servicewelt."""
 
 from __future__ import annotations
 
@@ -10,16 +10,15 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from slugify import slugify
 
 from .api import (
-    IntegrationBlueprintApiClient,
-    IntegrationBlueprintApiClientAuthenticationError,
-    IntegrationBlueprintApiClientCommunicationError,
-    IntegrationBlueprintApiClientError,
+    ServiceweltApiClient,
+    ServiceweltApiClientCommunicationError,
+    ServiceweltApiClientError,
 )
 from .const import DOMAIN, LOGGER
 
 
-class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for Blueprint."""
+class ServiceweltFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+    """Config flow for Servicewelt."""
 
     VERSION = 1
 
@@ -35,13 +34,10 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     username=user_input[CONF_USERNAME],
                     password=user_input[CONF_PASSWORD],
                 )
-            except IntegrationBlueprintApiClientAuthenticationError as exception:
-                LOGGER.warning(exception)
-                _errors["base"] = "auth"
-            except IntegrationBlueprintApiClientCommunicationError as exception:
+            except ServiceweltApiClientCommunicationError as exception:
                 LOGGER.error(exception)
                 _errors["base"] = "connection"
-            except IntegrationBlueprintApiClientError as exception:
+            except ServiceweltApiClientError as exception:
                 LOGGER.exception(exception)
                 _errors["base"] = "unknown"
             else:
@@ -81,7 +77,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _test_credentials(self, username: str, password: str) -> None:
         """Validate credentials."""
-        client = IntegrationBlueprintApiClient(
+        client = ServiceweltApiClient(
             username=username,
             password=password,
             session=async_create_clientsession(self.hass),

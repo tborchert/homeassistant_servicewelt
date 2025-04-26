@@ -9,33 +9,22 @@ import aiohttp
 import async_timeout
 
 
-class IntegrationBlueprintApiClientError(Exception):
+class ServiceweltApiClientError(Exception):
     """Exception to indicate a general API error."""
 
 
-class IntegrationBlueprintApiClientCommunicationError(
-    IntegrationBlueprintApiClientError,
+class ServiceweltApiClientCommunicationError(
+    ServiceweltApiClientError,
 ):
     """Exception to indicate a communication error."""
 
 
-class IntegrationBlueprintApiClientAuthenticationError(
-    IntegrationBlueprintApiClientError,
-):
-    """Exception to indicate an authentication error."""
-
-
 def _verify_response_or_raise(response: aiohttp.ClientResponse) -> None:
     """Verify that the response is valid."""
-    if response.status in (401, 403):
-        msg = "Invalid credentials"
-        raise IntegrationBlueprintApiClientAuthenticationError(
-            msg,
-        )
     response.raise_for_status()
 
 
-class IntegrationBlueprintApiClient:
+class ServiceweltApiClient:
     """Sample API Client."""
 
     def __init__(
@@ -86,16 +75,16 @@ class IntegrationBlueprintApiClient:
 
         except TimeoutError as exception:
             msg = f"Timeout error fetching information - {exception}"
-            raise IntegrationBlueprintApiClientCommunicationError(
+            raise ServiceweltApiClientCommunicationError(
                 msg,
             ) from exception
         except (aiohttp.ClientError, socket.gaierror) as exception:
             msg = f"Error fetching information - {exception}"
-            raise IntegrationBlueprintApiClientCommunicationError(
+            raise ServiceweltApiClientCommunicationError(
                 msg,
             ) from exception
         except Exception as exception:  # pylint: disable=broad-except
             msg = f"Something really wrong happened! - {exception}"
-            raise IntegrationBlueprintApiClientError(
+            raise ServiceweltApiClientError(
                 msg,
             ) from exception

@@ -1,0 +1,12 @@
+{
+  "domain": "servicewelt",
+  "name": "Stiebel Eltron Servicewelt",
+  "codeowners": [
+    "@tborchert"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/tborchert/homeassistant_servicewelt",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/tborchert/homeassistant_servicewelt/issues",
+  "version": "0.1.0"
+}
