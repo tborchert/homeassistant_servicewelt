@@ -1,46 +1,128 @@
-# Notice
+# Stiebel Eltron Servicewelt Integration
 
-The component and platforms in this repository are not meant to be used by a
-user, but as a "blueprint" that custom component developers can build
-upon, to make more awesome stuff.
+[![GitHub Release][releases-shield]][releases]
+[![GitHub Activity][commits-shield]][commits]
+[![License][license-shield]](LICENSE)
 
-HAVE FUN! 😎
+[![hacs][hacsbadge]][hacs]
+[![Project Maintenance][maintenance-shield]][user_profile]
 
-## Why?
+**This integration will set up the following platforms:**
 
-This is simple, by having custom_components look (README + structure) the same
-it is easier for developers to help each other and for users to start using them.
+Platform | Description
+-- | --
+`sensor` | Temperature, pressure, energy, and electrical sensors from your heat pump
+`binary_sensor` | Status sensors for pumps, compressor, and operating modes
 
-If you are a developer and you want to add things to this "blueprint" that you think more
-developers will have use for, please open a PR to add it :)
+This Home Assistant custom integration connects to the Stiebel Eltron Servicewelt portal to monitor your heat pump system. It extracts real-time data including temperatures, pressures, energy consumption, and operational status.
 
-## What?
+## Features
 
-This repository contains multiple files, here is a overview:
+- **Temperature Monitoring**: Outside temperature, heating circuit temperatures, DHW temperatures, heat pump process temperatures
+- **Energy Tracking**: Daily and total energy consumption and generation for heating and DHW
+- **System Status**: Real-time status of pumps, compressor, and operating modes
+- **Process Data**: Heat pump pressures, electrical measurements, and performance metrics
+- **Automatic Updates**: Configurable update intervals (default: 10 seconds)
 
-File | Purpose | Documentation
--- | -- | --
-`.devcontainer.json` | Used for development/testing with Visual Studio Code. | [Documentation](https://code.visualstudio.com/docs/remote/containers)
-`.github/ISSUE_TEMPLATE/*.yml` | Templates for the issue tracker | [Documentation](https://help.github.com/en/github/building-a-strong-community/configuring-issue-templates-for-your-repository)
-`custom_components/integration_blueprint/*` | Integration files, this is where everything happens. | [Documentation](https://developers.home-assistant.io/docs/creating_component_index)
-`CONTRIBUTING.md` | Guidelines on how to contribute. | [Documentation](https://help.github.com/en/github/building-a-strong-community/setting-guidelines-for-repository-contributors)
-`LICENSE` | The license file for the project. | [Documentation](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/licensing-a-repository)
-`README.md` | The file you are reading now, should contain info about the integration, installation and configuration instructions. | [Documentation](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax)
-`requirements.txt` | Python packages used for development/lint/testing this integration. | [Documentation](https://pip.pypa.io/en/stable/user_guide/#requirements-files)
+## Installation
 
-## How?
+### HACS (Recommended)
 
-1. Create a new repository in GitHub, using this repository as a template by clicking the "Use this template" button in the GitHub UI.
-1. Open your new repository in Visual Studio Code devcontainer (Preferably with the "`Dev Containers: Clone Repository in Named Container Volume...`" option).
-1. Rename all instances of the `integration_blueprint` to `custom_components/<your_integration_domain>` (e.g. `custom_components/awesome_integration`).
-1. Rename all instances of the `Integration Blueprint` to `<Your Integration Name>` (e.g. `Awesome Integration`).
-1. Run the `scripts/develop` to start HA and test out your new integration.
+1. Make sure you have [HACS](https://hacs.xyz) installed
+2. In the HACS panel, go to "Integrations"
+3. Click the "+" button to add a new repository
+4. Enter the repository URL: `https://github.com/tborchert/homeassistant_servicewelt`
+5. Select "Integration" as the category
+6. Click "Install"
+7. Restart Home Assistant
 
-## Next steps
+### Manual Installation
 
-These are some next steps you may want to look into:
-- Add tests to your integration, [`pytest-homeassistant-custom-component`](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component) can help you get started.
-- Add brand images (logo/icon) to https://github.com/home-assistant/brands.
-- Create your first release.
-- Share your integration on the [Home Assistant Forum](https://community.home-assistant.io/).
-- Submit your integration to [HACS](https://hacs.xyz/docs/publish/start).
+1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`)
+2. If you do not have a `custom_components` directory (folder) there, you need to create it
+3. In the `custom_components` directory (folder) create a new folder called `servicewelt`
+4. Download _all_ the files from the `custom_components/servicewelt/` directory (folder) in this repository
+5. Place the files you downloaded in the new directory (folder) you created
+6. Restart Home Assistant
+
+## Configuration
+
+### Using the UI
+
+1. In Home Assistant, go to "Configuration" > "Integrations"
+2. Click the "+" button to add a new integration
+3. Search for "Stiebel Eltron Servicewelt"
+4. Enter your Servicewelt portal credentials:
+   - **Username**: Your Servicewelt account username
+   - **Password**: Your Servicewelt account password
+5. Click "Submit"
+
+The integration will automatically discover and create sensors for all available data points from your heat pump system.
+
+## Supported Data Points
+
+### Temperature Sensors
+- Outside Temperature
+- Heating Circuit 1 (Actual & Set Temperature)
+- Buffer Temperature (Actual & Set)
+- DHW Temperature (Actual & Set)
+- Heat pump process temperatures (Return, Flow, Hot Gas, etc.)
+
+### Energy Sensors
+- Daily and total heating energy
+- Daily and total DHW energy
+- Power consumption metrics
+
+### Electrical Sensors
+- Inverter power, current, and voltage
+- Compressor speed and fan rate
+
+### Pressure Sensors
+- Low and high pressure readings
+
+### Binary Status Sensors
+- Heating circuit pump status
+- DHW heating status
+- Compressor status
+- Summer mode status
+- Buffer and DHW charging pump status
+
+## Troubleshooting
+
+### Common Issues
+
+**Integration fails to load:**
+- Verify your Servicewelt credentials are correct
+- Check that your heat pump system is accessible via the Servicewelt portal
+- Ensure your Home Assistant instance can reach the internet
+
+**Sensors showing "Unknown" or "Unavailable":**
+- Check the Home Assistant logs for specific error messages
+- Verify your heat pump is online and reporting data
+- Try restarting the integration
+
+**Update frequency issues:**
+- The default update interval is 10 seconds
+- You can modify this in the integration's coordinator configuration
+- Be mindful of not overwhelming the Servicewelt servers
+
+## Contributing
+
+If you want to contribute to this integration development, please read the [Contribution Guidelines](CONTRIBUTING.md).
+
+## Credits
+
+This integration was built using the [Home Assistant Integration Blueprint](https://github.com/ludeeus/integration_blueprint) as a foundation.
+
+---
+
+[servicewelt]: https://github.com/tborchert/homeassistant_servicewelt
+[commits-shield]: https://img.shields.io/github/commit-activity/y/tborchert/homeassistant_servicewelt.svg?style=for-the-badge
+[commits]: https://github.com/tborchert/homeassistant_servicewelt/commits/main
+[hacs]: https://github.com/hacs/integration
+[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/tborchert/homeassistant_servicewelt.svg?style=for-the-badge
+[maintenance-shield]: https://img.shields.io/badge/maintainer-%40tborchert-blue.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/tborchert/homeassistant_servicewelt.svg?style=for-the-badge
+[releases]: https://github.com/tborchert/homeassistant_servicewelt/releases
+[user_profile]: https://github.com/tborchert
