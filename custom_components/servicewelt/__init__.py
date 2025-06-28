@@ -43,6 +43,7 @@ async def async_setup_entry(
         name=DOMAIN,
         update_interval=timedelta(seconds=10),
     )
+    coordinator.config_entry = entry
     entry.runtime_data = ServiceweltData(
         client=ServiceweltApiClient(
             username=entry.data[CONF_USERNAME],
