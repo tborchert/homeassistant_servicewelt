@@ -2,22 +2,19 @@
 
 from __future__ import annotations
 
+import sys
+import os
 import pytest
-from unittest.mock import patch
 
-pytest_plugins = "pytest_homeassistant_custom_component"
-
-
-@pytest.fixture(autouse=True)
-def auto_enable_custom_integrations(enable_custom_integrations):
-    """Enable custom integrations defined in the test dir."""
-    yield
+# Add the custom_components directory to the Python path for testing
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "custom_components"))
 
 
 @pytest.fixture
 def mock_servicewelt_api():
     """Fixture that mocks the ServiceweltApiClient."""
-    with patch("custom_components.servicewelt.api.ServiceweltApiClient") as mock_api:
+    from unittest.mock import patch
+    with patch("servicewelt.api.ServiceweltApiClient") as mock_api:
         yield mock_api
 
 
