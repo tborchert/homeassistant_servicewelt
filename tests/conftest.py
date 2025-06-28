@@ -1,51 +1,11 @@
-"""Global fixtures for servicewelt integration."""
+"""Global fixtures for servicewelt coordinator tests."""
 
-from __future__ import annotations
-
-import sys
-import os
 import pytest
-
-# Add the custom_components directory to the Python path for testing
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "custom_components"))
-
-
-@pytest.fixture
-def mock_servicewelt_api():
-    """Fixture that mocks the ServiceweltApiClient."""
-    from unittest.mock import patch
-    with patch("servicewelt.api.ServiceweltApiClient") as mock_api:
-        yield mock_api
-
-
-@pytest.fixture
-def sample_html_files():
-    """Fixture that provides sample HTML file contents."""
-    import os
-    
-    sample_files = {}
-    sample_dir = os.path.join(os.path.dirname(__file__), "..", "sample_pages")
-    
-    files = {
-        "s_1_0.html": "system",
-        "s_1_1.html": "heat_pump", 
-        "s_1_8.html": "energy_footprint",
-        "s_2_0.html": "system_status",
-        "s_2_2.html": "heat_pump_status",
-    }
-    
-    for filename, key in files.items():
-        filepath = os.path.join(sample_dir, filename)
-        if os.path.exists(filepath):
-            with open(filepath, 'r', encoding='utf-8') as f:
-                sample_files[key] = f.read()
-    
-    return sample_files
 
 
 @pytest.fixture
 def parsed_sample_data():
-    """Fixture that provides parsed sample data from HTML files."""
+    """Fixture that provides parsed sample data for coordinator testing."""
     return {
         "system": {
             "HEATING": {
