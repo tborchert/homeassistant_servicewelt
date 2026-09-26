@@ -8,21 +8,23 @@ This is a Home Assistant custom integration for Stiebel Eltron Servicewelt, prov
 
 ## Development Commands
 
+Tasks are defined in `mise.toml` and run via [mise](https://mise.jdx.dev/).
+
 ### Setup
 ```bash
-./scripts/setup
+mise run setup
 ```
-Installs Poetry and project dependencies.
+Installs project dependencies via uv.
 
 ### Development Server
 ```bash
-./scripts/develop
+mise run develop
 ```
 Starts a local Home Assistant instance with the integration loaded for testing. Uses `config/` directory for HA configuration.
 
 ### Linting
 ```bash
-./scripts/lint
+mise run lint
 ```
 Runs ruff formatter and linter with auto-fix.
 
@@ -48,6 +50,6 @@ Runs ruff formatter and linter with auto-fix.
 
 ### Dependencies
 - Python 3.13+
-- Poetry for dependency management
+- mise for tool/task management, uv for dependency management
 - Ruff for code formatting and linting
 - colorlog for enhanced logging

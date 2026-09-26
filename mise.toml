@@ -1,0 +1,31 @@
+[tools]
+python = "3.13"
+uv = "latest"
+
+[tasks.setup]
+description = "Install project dependencies"
+run = "uv sync"
+
+[tasks.lint]
+description = "Format and lint the codebase"
+run = """
+uv run ruff format .
+uv run ruff check . --fix
+"""
+
+[tasks.develop]
+description = "Run a local Home Assistant instance with the integration loaded"
+run = """
+if [ ! -d "${PWD}/config" ]; then
+  mkdir -p "${PWD}/config"
+  uv run hass --config "${PWD}/config" --script ensure_config
+fi
+
+# Set the path to custom_components
+## This lets us have the structure we want <root>/custom_components/servicewelt
+## while at the same time have Home Assistant configuration inside <root>/config
+## without resorting to symlinks.
+export PYTHONPATH="${PYTHONPATH}:${PWD}/custom_components"
+
+uv run hass --config "${PWD}/config" --debug
+"""
