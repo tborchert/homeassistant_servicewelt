@@ -8,12 +8,12 @@ select = [
 ]
 
 ignore = [
-    "ANN101", # Missing type annotation for `self` in method
     "ANN401", # Dynamically typed expressions (typing.Any) are disallowed
     "D203", # no-blank-line-before-class (incompatible with formatter)
     "D212", # multi-line-summary-first-line (incompatible with formatter)
     "COM812", # incompatible with formatter
     "ISC001", # incompatible with formatter
+    "CPY001", # no per-file copyright headers; see LICENSE
 ]
 
 [lint.flake8-pytest-style]
@@ -26,9 +26,12 @@ keep-runtime-typing = true
 max-complexity = 25
 [lint.per-file-ignores]
 "tests/**" = [
+    "ANN001",  # fixture arguments are typed by the fixture, not the test
+    "ANN201",  # tests and fixtures need no return annotations
     "S101",    # assert is how pytest tests are written
     "D102",    # test helpers are small and self-describing
     "D103",    # test functions are named for what they check
     "PLR2004", # magic values are the point of an expectation
+    "SLF001",  # tests check internals such as the HTML parser directly
 ]
 "tests/e2e/fake_portal/*" = ["INP001"]  # standalone script copied into its own image

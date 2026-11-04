@@ -5,7 +5,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
-from homeassistant.const import UnitOfTemperature, UnitOfPressure, UnitOfEnergy, UnitOfPower, UnitOfTime, UnitOfElectricCurrent, UnitOfElectricPotential, UnitOfFrequency, PERCENTAGE
+from homeassistant.const import (
+    PERCENTAGE,
+    UnitOfElectricCurrent,
+    UnitOfElectricPotential,
+    UnitOfEnergy,
+    UnitOfFrequency,
+    UnitOfPower,
+    UnitOfPressure,
+    UnitOfTemperature,
+)
 
 from .entity import ServiceweltEntity
 
@@ -27,7 +36,7 @@ SENSOR_DESCRIPTIONS = {
         icon="mdi:thermometer",
     ),
     "actual_temperature_hk1": SensorEntityDescription(
-        key="actual_temperature_hk1", 
+        key="actual_temperature_hk1",
         name="Actual Temperature HK1",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class="temperature",
@@ -35,7 +44,7 @@ SENSOR_DESCRIPTIONS = {
     ),
     "set_temperature_hk1": SensorEntityDescription(
         key="set_temperature_hk1",
-        name="Set Temperature HK1", 
+        name="Set Temperature HK1",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class="temperature",
         icon="mdi:thermometer-plus",
@@ -99,7 +108,7 @@ SENSOR_DESCRIPTIONS = {
     ),
     "high_pressure": SensorEntityDescription(
         key="high_pressure",
-        name="High Pressure", 
+        name="High Pressure",
         native_unit_of_measurement=UnitOfPressure.BAR,
         device_class="pressure",
         icon="mdi:gauge",
@@ -147,7 +156,7 @@ SENSOR_DESCRIPTIONS = {
     ),
     "heating_energy_total": SensorEntityDescription(
         key="heating_energy_total",
-        name="Heating Energy Total", 
+        name="Heating Energy Total",
         native_unit_of_measurement=UnitOfEnergy.MEGA_WATT_HOUR,
         device_class="energy",
         icon="mdi:lightning-bolt",
@@ -160,7 +169,7 @@ SENSOR_DESCRIPTIONS = {
         icon="mdi:lightning-bolt",
     ),
     "dhw_energy_total": SensorEntityDescription(
-        key="dhw_energy_total", 
+        key="dhw_energy_total",
         name="DHW Energy Total",
         native_unit_of_measurement=UnitOfEnergy.MEGA_WATT_HOUR,
         device_class="energy",
@@ -185,7 +194,7 @@ async def async_setup_entry(
                 sensor_key=sensor_key,
             )
         )
-    
+
     async_add_entities(entities)
 
 
@@ -212,28 +221,31 @@ class ServiceweltSensor(ServiceweltEntity, SensorEntity):
 
         # Map sensor keys to data paths in the scraped structure
         value = self._extract_sensor_value()
-        
+
         # Handle structured values with units
         if isinstance(value, dict) and "value" in value:
             return value["value"]
-        
+
         return value
 
     def _extract_sensor_value(self) -> float | str | None:
         """Extract sensor value from coordinator data."""
         data = self.coordinator.data
-        
+
         # Map sensor keys to actual data paths from HTML scraping
         key_mappings = {
             # System data (from 'system' page)
             "outside_temperature": ("system", "HEATING", "OUTSIDE TEMPERATURE"),
             "actual_temperature_hk1": ("system", "HEATING", "ACTUAL TEMPERATURE HK 1"),
             "set_temperature_hk1": ("system", "HEATING", "SET TEMPERATURE HK 1"),
-            "actual_buffer_temperature": ("system", "HEATING", "ACTUAL BUFFER TEMPERATURE"),
+            "actual_buffer_temperature": (
+                "system",
+                "HEATING",
+                "ACTUAL BUFFER TEMPERATURE",
+            ),
             "set_buffer_temperature": ("system", "HEATING", "SET BUFFER TEMPERATURE"),
             "dhw_actual_temperature": ("system", "DHW", "ACTUAL TEMPERATURE"),
             "dhw_set_temperature": ("system", "DHW", "SET TEMPERATURE"),
-            
             # Heat pump process data (from 'heat_pump' page)
             "return_temperature": ("heat_pump", "PROCESS DATA", "RETURN TEMPERATURE"),
             "flow_temperature": ("heat_pump", "PROCESS DATA", "FLOW TEMPERATURE"),
@@ -243,21 +255,24 @@ class ServiceweltSensor(ServiceweltEntity, SensorEntity):
             "inverter_power": ("heat_pump", "PROCESS DATA", "INVERTER POWER"),
             "inverter_current": ("heat_pump", "PROCESS DATA", "INVERTER CURRENT"),
             "inverter_voltage": ("heat_pump", "PROCESS DATA", "INVERTER VOLTAGE"),
-            "compressor_speed": ("heat_pump", "PROCESS DATA", "ACTUAL COMPRESSOR SPEED"),
+            "compressor_speed": (
+                "heat_pump",
+                "PROCESS DATA",
+                "ACTUAL COMPRESSOR SPEED",
+            ),
             "fan_rate": ("heat_pump", "PROCESS DATA", "REL FAN RATE"),
-            
             # Energy data
             "heating_energy_day": ("heat_pump", "AMOUNT OF HEAT", "VD HEATING DAY"),
             "heating_energy_total": ("heat_pump", "AMOUNT OF HEAT", "VD HEATING TOTAL"),
             "dhw_energy_day": ("heat_pump", "AMOUNT OF HEAT", "VD DHW DAY"),
             "dhw_energy_total": ("heat_pump", "AMOUNT OF HEAT", "VD DHW TOTAL"),
         }
-        
+
         if self._sensor_key not in key_mappings:
             return None
-            
+
         page, category, field = key_mappings[self._sensor_key]
-        
+
         try:
             return data.get(page, {}).get(category, {}).get(field)
         except (KeyError, AttributeError):

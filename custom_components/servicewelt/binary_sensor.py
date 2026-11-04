@@ -84,7 +84,7 @@ async def async_setup_entry(
                 sensor_key=sensor_key,
             )
         )
-    
+
     async_add_entities(entities)
 
 
@@ -110,37 +110,52 @@ class ServiceweltBinarySensor(ServiceweltEntity, BinarySensorEntity):
             return False
 
         value = self._extract_sensor_value()
-        
+
         # Handle 'on'/'off' string values from HTML parsing
         if isinstance(value, str):
             return value.lower() == "on"
-        
+
         # Handle boolean values
         return bool(value)
 
     def _extract_sensor_value(self) -> str | bool | None:
         """Extract binary sensor value from coordinator data."""
         data = self.coordinator.data
-        
+
         # Map sensor keys to actual data paths from HTML scraping
         key_mappings = {
             # Operating mode sensors (from system_status page)
-            "heating_circuit_pump": ("system_status", "OPERATING MODE", "HEATING CIRCUIT 1 PUMP"),
+            "heating_circuit_pump": (
+                "system_status",
+                "OPERATING MODE",
+                "HEATING CIRCUIT 1 PUMP",
+            ),
             "dhw_heating": ("system_status", "OPERATING MODE", "DHW HEATING"),
             "compressor": ("system_status", "OPERATING MODE", "COMPRESSOR"),
             "summer_mode": ("system_status", "OPERATING MODE", "SUMMER MODE"),
-            "buffer_charging_pump": ("system_status", "SYSTEM STATUS", "BUFFER CHARGING PUMP 1"),
-            "dhw_charging_pump": ("system_status", "SYSTEM STATUS", "DHW CHARGING PUMP"),
-            
+            "buffer_charging_pump": (
+                "system_status",
+                "SYSTEM STATUS",
+                "BUFFER CHARGING PUMP 1",
+            ),
+            "dhw_charging_pump": (
+                "system_status",
+                "SYSTEM STATUS",
+                "DHW CHARGING PUMP",
+            ),
             # Heat pump status sensors (from heat_pump_status page)
-            "compressor_output": ("heat_pump_status", "HEAT PUMP STATUS", "OUTPUT COMPRESSOR ON"),
+            "compressor_output": (
+                "heat_pump_status",
+                "HEAT PUMP STATUS",
+                "OUTPUT COMPRESSOR ON",
+            ),
         }
-        
+
         if self._sensor_key not in key_mappings:
             return None
-            
+
         page, category, field = key_mappings[self._sensor_key]
-        
+
         try:
             return data.get(page, {}).get(category, {}).get(field)
         except (KeyError, AttributeError):

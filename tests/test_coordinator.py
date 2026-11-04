@@ -1,11 +1,17 @@
+"""Tests for the servicewelt data update coordinator."""
+
 from __future__ import annotations
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 from homeassistant.helpers.update_coordinator import UpdateFailed
 
+from custom_components.servicewelt.api import (
+    ServiceweltApiClientCommunicationError,
+    ServiceweltApiClientError,
+)
 from custom_components.servicewelt.coordinator import ServiceweltDataUpdateCoordinator
-from custom_components.servicewelt.api import ServiceweltApiClientError
 
 
 @pytest.fixture
@@ -76,8 +82,6 @@ async def test_data_update_with_api_error(coordinator, mock_client):
 @pytest.mark.asyncio
 async def test_data_update_with_communication_error(coordinator, mock_client):
     """Test data update when API raises a communication error."""
-    from custom_components.servicewelt.api import ServiceweltApiClientCommunicationError
-
     error_message = "Network timeout"
     mock_client.async_get_data.side_effect = ServiceweltApiClientCommunicationError(
         error_message
@@ -97,7 +101,7 @@ async def test_data_update_with_unexpected_error(coordinator, mock_client):
     mock_client.async_get_data.side_effect = Exception(error_message)
 
     # Should not catch unexpected exceptions, let them bubble up
-    with pytest.raises(Exception) as exc_info:
+    with pytest.raises(Exception, match=error_message) as exc_info:
         await coordinator._async_update_data()
 
     assert str(exc_info.value) == error_message
@@ -111,9 +115,7 @@ async def test_coordinator_has_config_entry_reference(coordinator, mock_config_e
 
 
 @pytest.mark.asyncio
-async def test_coordinator_uses_client_from_runtime_data(
-    coordinator, mock_config_entry, mock_client
-):
+async def test_coordinator_uses_client_from_runtime_data(coordinator, mock_client):
     """Test that coordinator uses client from config entry runtime data."""
     await coordinator._async_update_data()
 

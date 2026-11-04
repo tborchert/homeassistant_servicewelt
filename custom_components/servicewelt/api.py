@@ -12,6 +12,9 @@ from bs4 import BeautifulSoup
 
 from .const import DEFAULT_HOST
 
+# Data rows on portal pages are <td class="key"> followed by <td class="value">
+CELLS_PER_ROW = 2
+
 
 class ServiceweltApiClientError(Exception):
     """Exception to indicate a general API error."""
@@ -67,8 +70,7 @@ class ServiceweltApiClient:
     async def _fetch_page(self, path: str) -> str:
         """Fetch a page from the Servicewelt portal."""
         url = f"{self._base_url}/{path}"
-        response = await self._api_wrapper(method="get", url=url)
-        return response
+        return await self._api_wrapper(method="get", url=url)
 
     def _parse_html_data(self, html: str) -> dict[str, Any]:
         """Parse HTML and extract sensor data."""
@@ -89,7 +91,7 @@ class ServiceweltApiClient:
 
             for row in rows:
                 cells = row.find_all("td")
-                if len(cells) != 2:
+                if len(cells) != CELLS_PER_ROW:
                     continue
 
                 key = cells[0].get_text(strip=True)
@@ -127,12 +129,11 @@ class ServiceweltApiClient:
             num_str, unit = match.groups()
             try:
                 num_value = float(num_str)
-                if unit:
-                    return {"value": num_value, "unit": unit}
-                else:
-                    return num_value
             except ValueError:
-                pass
+                return value
+            if unit:
+                return {"value": num_value, "unit": unit}
+            return num_value
 
         return value
 

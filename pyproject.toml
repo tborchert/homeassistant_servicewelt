@@ -14,8 +14,14 @@ dependencies = [
 dev = [
     # Pins homeassistant==2025.6.3, pytest and pytest-asyncio to matching versions
     "pytest-homeassistant-custom-component==0.13.254",
+]
+# Separate so CI can lint without installing Home Assistant
+lint = [
     "ruff>=0.11.7",
 ]
+
+[tool.uv]
+default-groups = ["dev", "lint"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["custom_components/servicewelt"]

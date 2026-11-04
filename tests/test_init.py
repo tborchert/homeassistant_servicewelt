@@ -11,7 +11,6 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 
 from custom_components.servicewelt import async_setup_entry
-from custom_components.servicewelt.api import ServiceweltApiClient
 from custom_components.servicewelt.coordinator import ServiceweltDataUpdateCoordinator
 
 
@@ -81,25 +80,27 @@ async def test_async_setup_entry_success(
 @pytest.mark.asyncio
 async def test_coordinator_configuration(mock_hass, mock_config_entry):
     """Test that coordinator is configured correctly."""
-    with patch(
-        "custom_components.servicewelt.async_get_clientsession"
-    ) as mock_get_session:
-        with patch(
+    with (
+        patch(
+            "custom_components.servicewelt.async_get_clientsession"
+        ) as mock_get_session,
+        patch(
             "custom_components.servicewelt.async_get_loaded_integration"
-        ) as mock_get_integration:
-            with patch.object(
-                ServiceweltDataUpdateCoordinator, "async_config_entry_first_refresh"
-            ):
-                mock_get_session.return_value = MagicMock()
-                mock_get_integration.return_value = MagicMock()
+        ) as mock_get_integration,
+        patch.object(
+            ServiceweltDataUpdateCoordinator, "async_config_entry_first_refresh"
+        ),
+    ):
+        mock_get_session.return_value = MagicMock()
+        mock_get_integration.return_value = MagicMock()
 
-                await async_setup_entry(mock_hass, mock_config_entry)
+        await async_setup_entry(mock_hass, mock_config_entry)
 
-                coordinator = mock_config_entry.runtime_data.coordinator
+        coordinator = mock_config_entry.runtime_data.coordinator
 
-                # Check coordinator configuration
-                assert coordinator.name == "servicewelt"
-                assert coordinator.update_interval == timedelta(seconds=10)
+        # Check coordinator configuration
+        assert coordinator.name == "servicewelt"
+        assert coordinator.update_interval == timedelta(seconds=10)
 
 
 @pytest.mark.asyncio
@@ -129,50 +130,52 @@ async def test_async_setup_entry_coordinator_refresh_failure(
 @pytest.mark.asyncio
 async def test_runtime_data_coordinator_structure(mock_hass, mock_config_entry):
     """Test that runtime data contains properly configured coordinator."""
-    with patch(
-        "custom_components.servicewelt.async_get_clientsession"
-    ) as mock_get_session:
-        with patch(
+    with (
+        patch(
+            "custom_components.servicewelt.async_get_clientsession"
+        ) as mock_get_session,
+        patch(
             "custom_components.servicewelt.async_get_loaded_integration"
-        ) as mock_get_integration:
-            with patch.object(
-                ServiceweltDataUpdateCoordinator, "async_config_entry_first_refresh"
-            ):
-                mock_get_session.return_value = MagicMock()
-                mock_integration = MagicMock()
-                mock_get_integration.return_value = mock_integration
+        ) as mock_get_integration,
+        patch.object(
+            ServiceweltDataUpdateCoordinator, "async_config_entry_first_refresh"
+        ),
+    ):
+        mock_get_session.return_value = MagicMock()
+        mock_integration = MagicMock()
+        mock_get_integration.return_value = mock_integration
 
-                await async_setup_entry(mock_hass, mock_config_entry)
+        await async_setup_entry(mock_hass, mock_config_entry)
 
-                runtime_data = mock_config_entry.runtime_data
+        runtime_data = mock_config_entry.runtime_data
 
-                # Check that runtime data has coordinator
-                assert hasattr(runtime_data, "coordinator")
+        # Check that runtime data has coordinator
+        assert hasattr(runtime_data, "coordinator")
 
-                # Check that coordinator is the correct type
-                assert isinstance(
-                    runtime_data.coordinator, ServiceweltDataUpdateCoordinator
-                )
+        # Check that coordinator is the correct type
+        assert isinstance(runtime_data.coordinator, ServiceweltDataUpdateCoordinator)
 
 
 @pytest.mark.asyncio
 async def test_coordinator_config_entry_reference(mock_hass, mock_config_entry):
     """Test that coordinator has reference to config entry."""
-    with patch(
-        "custom_components.servicewelt.async_get_clientsession"
-    ) as mock_get_session:
-        with patch(
+    with (
+        patch(
+            "custom_components.servicewelt.async_get_clientsession"
+        ) as mock_get_session,
+        patch(
             "custom_components.servicewelt.async_get_loaded_integration"
-        ) as mock_get_integration:
-            with patch.object(
-                ServiceweltDataUpdateCoordinator, "async_config_entry_first_refresh"
-            ):
-                mock_get_session.return_value = MagicMock()
-                mock_get_integration.return_value = MagicMock()
+        ) as mock_get_integration,
+        patch.object(
+            ServiceweltDataUpdateCoordinator, "async_config_entry_first_refresh"
+        ),
+    ):
+        mock_get_session.return_value = MagicMock()
+        mock_get_integration.return_value = MagicMock()
 
-                await async_setup_entry(mock_hass, mock_config_entry)
+        await async_setup_entry(mock_hass, mock_config_entry)
 
-                coordinator = mock_config_entry.runtime_data.coordinator
+        coordinator = mock_config_entry.runtime_data.coordinator
 
-                # Check that coordinator has reference to config entry
-                assert coordinator.config_entry == mock_config_entry
+        # Check that coordinator has reference to config entry
+        assert coordinator.config_entry == mock_config_entry

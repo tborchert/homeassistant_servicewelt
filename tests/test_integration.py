@@ -103,7 +103,7 @@ def test_parser_extracts_every_row_of_sample_page(page: str) -> None:
     client = ServiceweltApiClient("u", "p", session=None)  # type: ignore[arg-type]
     html = sample(page)
 
-    parsed = client._parse_html_data(html)  # noqa: SLF001
+    parsed = client._parse_html_data(html)
 
     rows = sum(len(category) for category in parsed.values())
     assert parsed, "no tables found"
@@ -115,9 +115,9 @@ def test_parser_extracts_every_row_of_sample_page(page: str) -> None:
 def test_parser_converts_values() -> None:
     client = ServiceweltApiClient("u", "p", session=None)  # type: ignore[arg-type]
 
-    system = client._parse_html_data(sample("1,0"))  # noqa: SLF001
-    heat_pump = client._parse_html_data(sample("1,1"))  # noqa: SLF001
-    status = client._parse_html_data(sample("2,0"))  # noqa: SLF001
+    system = client._parse_html_data(sample("1,0"))
+    heat_pump = client._parse_html_data(sample("1,1"))
+    status = client._parse_html_data(sample("2,0"))
 
     assert system["HEATING"]["OUTSIDE TEMPERATURE"] == {"value": 26.3, "unit": "°C"}
     assert system["ELECTRIC BOOSTER HEATER"]["DUAL MODE TEMP HZG"] == {
