@@ -29,12 +29,11 @@ This Home Assistant custom integration connects to the Stiebel Eltron Servicewel
 ### HACS (Recommended)
 
 1. Make sure you have [HACS](https://hacs.xyz) installed
-2. In the HACS panel, go to "Integrations"
-3. Click the "+" button to add a new repository
-4. Enter the repository URL: `https://github.com/tborchert/homeassistant_servicewelt`
-5. Select "Integration" as the category
-6. Click "Install"
-7. Restart Home Assistant
+2. Open HACS, click the three-dot menu in the top right and choose "Custom repositories"
+3. Enter the repository URL `https://github.com/tborchert/homeassistant_servicewelt`, select "Integration" as the type and click "Add"
+4. Search HACS for "Stiebel Eltron Servicewelt", open it and click "Download"
+5. Restart Home Assistant
+6. Add the integration under Settings > Devices & services (see [Configuration](#configuration))
 
 ### Manual Installation
 

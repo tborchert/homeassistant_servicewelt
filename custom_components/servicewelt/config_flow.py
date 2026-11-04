@@ -14,7 +14,7 @@ from .api import (
     ServiceweltApiClientCommunicationError,
     ServiceweltApiClientError,
 )
-from .const import DEFAULT_HOST, DOMAIN, LOGGER
+from .const import DEFAULT_HOST, DOCS_URL, DOMAIN, LOGGER
 
 
 class ServiceweltFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -82,6 +82,7 @@ class ServiceweltFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 },
             ),
             errors=_errors,
+            description_placeholders={"docs_url": DOCS_URL},
         )
 
     async def _test_credentials(self, host: str, username: str, password: str) -> None:
