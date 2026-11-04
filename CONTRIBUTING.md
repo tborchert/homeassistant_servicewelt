@@ -15,7 +15,7 @@ Pull requests are the best way to propose changes to the codebase.
 
 1. Fork the repo and create your branch from `main`.
 2. If you've changed something, update the documentation.
-3. Make sure your code lints (using `scripts/lint`).
+3. Make sure your code lints (using `mise run lint`).
 4. Test you contribution.
 5. Issue that pull request!
 
@@ -55,6 +55,46 @@ if you use Visual Studio Code. With this container you will have a stand alone
 Home Assistant instance running and already configured with the included
 [`configuration.yaml`](./config/configuration.yaml)
 file.
+
+### Unit tests
+
+```bash
+mise run test
+```
+
+`tests/test_integration.py` runs the integration on an in-process Home
+Assistant from
+[pytest-homeassistant-custom-component](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component),
+with HA's HTTP client mocked to serve `sample_pages/`. These tests are fast
+and need no Docker, but nothing goes over a real network.
+
+### End-to-end tests
+
+`tests/e2e/` runs the integration the way it runs for real: Home Assistant
+(the official container image) with `custom_components/` mounted, polling a
+fake Servicewelt portal in a second container that serves the captured pages
+in [`sample_pages/`](./sample_pages). Inside the compose network the fake
+portal answers at `http://servicewelt`, the same hostname as the real device.
+The tests onboard a fresh HA, add the integration through the config flow
+over HA's REST API, and check entity states. They also change pages, break
+them and slow them down through the fake portal's `/_control` API.
+
+Docker is required. Each session starts from a clean HA:
+
+```bash
+mise run test-e2e
+```
+
+- `E2E_NO_BUILD=1` skips rebuilding the fake portal image.
+- `E2E_KEEP_STACK=1` leaves the containers up afterwards. HA is at
+  <http://localhost:18123> (user `e2e`, password `e2e-password`) and the fake
+  portal is at <http://localhost:18080/?s=1,0>.
+- `HA_VERSION` picks a different Home Assistant image tag.
+- `HA_PORT` and `PORTAL_PORT` change the host ports.
+- The HA log from the last run is written to `tests/e2e/logs/homeassistant.log`.
+
+To capture a new portal page, save it as `sample_pages/s_<a>_<b>.html` (for
+`?s=<a>,<b>`). The fake portal serves it without any other changes.
 
 ## License
 

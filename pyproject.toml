@@ -1,21 +1,31 @@
 [project]
-name = "servicewelt"
+name = "homeassistant-servicewelt"
 version = "0.1.0"
-description = ""
-authors = [
-    {name = "Tom Borchert",email = "tborchert@gmail.com"}
-]
+description = "Home Assistant integration for Stiebel Eltron Servicewelt"
+authors = [{name = "Tom Borchert", email = "tborchert@gmail.com"}]
 readme = "README.md"
-requires-python = ">=3.13,<4.0"
+requires-python = ">=3.13.2,<3.14"
 dependencies = [
-    "colorlog (==6.9.0)"
+    "aiohttp",
+    "beautifulsoup4>=4.12.0",
 ]
 
+[dependency-groups]
+dev = [
+    # Pins homeassistant==2025.6.3, pytest and pytest-asyncio to matching versions
+    "pytest-homeassistant-custom-component==0.13.254",
+]
+# Separate so CI can lint without installing Home Assistant
+lint = [
+    "ruff>=0.11.7",
+]
+
+[tool.uv]
+default-groups = ["dev", "lint"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["custom_components/servicewelt"]
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.11.7"
-
+requires = ["hatchling"]
+build-backend = "hatchling.build"

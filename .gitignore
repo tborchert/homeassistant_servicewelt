@@ -11,8 +11,11 @@ __pycache__
 .vscode
 coverage.xml
 .ruff_cache
+.venv
 
 
 # Home Assistant configuration
 config/*
 !config/configuration.yaml
+# e2e test container logs
+tests/e2e/logs/
