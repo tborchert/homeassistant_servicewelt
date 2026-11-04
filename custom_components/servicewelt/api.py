@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+import asyncio
 import re
 import socket
 from typing import Any
-from bs4 import BeautifulSoup
 
 import aiohttp
-import async_timeout
+from bs4 import BeautifulSoup
+
+from .const import DEFAULT_HOST
 
 
 class ServiceweltApiClientError(Exception):
@@ -34,12 +36,13 @@ class ServiceweltApiClient:
         username: str,
         password: str,
         session: aiohttp.ClientSession,
+        host: str = DEFAULT_HOST,
     ) -> None:
         """Initialize Servicewelt API Client."""
         self._username = username
         self._password = password
         self._session = session
-        self._base_url = "https://servicewelt.stiebel-eltron.com"
+        self._base_url = host.rstrip("/")
 
     async def async_get_data(self) -> dict[str, Any]:
         """Get data from the Servicewelt portal."""
@@ -53,13 +56,11 @@ class ServiceweltApiClient:
             ("heat_pump_status", "?s=2,2"),
         ]
 
+        # Fetch errors propagate so the coordinator marks entities unavailable
+        # and the config flow can report that the portal is unreachable.
         for page_name, page_path in pages:
-            try:
-                html = await self._fetch_page(page_path)
-                parsed_data = self._parse_html_data(html)
-                data[page_name] = parsed_data
-            except Exception as e:
-                data[page_name] = {"error": str(e)}
+            html = await self._fetch_page(page_path)
+            data[page_name] = self._parse_html_data(html)
 
         return data
 
@@ -144,7 +145,7 @@ class ServiceweltApiClient:
     ) -> str:
         """Get information from the API."""
         try:
-            async with async_timeout.timeout(10):
+            async with asyncio.timeout(10):
                 response = await self._session.request(
                     method=method,
                     url=url,

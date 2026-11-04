@@ -52,7 +52,8 @@ This Home Assistant custom integration connects to the Stiebel Eltron Servicewel
 1. In Home Assistant, go to "Configuration" > "Integrations"
 2. Click the "+" button to add a new integration
 3. Search for "Stiebel Eltron Servicewelt"
-4. Enter your Servicewelt portal credentials:
+4. Enter your Servicewelt portal details:
+   - **Portal URL**: Address of the Servicewelt web interface (default `http://servicewelt`)
    - **Username**: Your Servicewelt account username
    - **Password**: Your Servicewelt account password
 5. Click "Submit"
