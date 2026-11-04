@@ -1,6 +1,9 @@
 {
   "domain": "servicewelt",
   "name": "Stiebel Eltron Servicewelt",
+  "categories": [
+    "climate.heat_pumps_air_conditioning"
+  ],
   "codeowners": [
     "@tborchert"
   ],

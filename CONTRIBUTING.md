@@ -96,6 +96,21 @@ mise run test-e2e
 To capture a new portal page, save it as `sample_pages/s_<a>_<b>.html` (for
 `?s=<a>,<b>`). The fake portal serves it without any other changes.
 
+### HACS and Home Assistant validation
+
+The `Validate` workflow runs both checks below; they can also run locally with Docker:
+
+```bash
+mise run validate-hassfest
+```
+
+```bash
+GITHUB_TOKEN=<token> mise run validate-hacs
+```
+
+`validate-hacs` checks the repository as published on GitHub (its description,
+topics and default branch), not your local checkout, so push first.
+
 ## License
 
 By contributing, you agree that your contributions will be licensed under its MIT License.

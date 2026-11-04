@@ -37,3 +37,23 @@ run = "uv run pytest"
 [tasks.test-e2e]
 description = "Run end-to-end tests: Home Assistant + fake Servicewelt portal in Docker"
 run = "uv run pytest tests/e2e -m e2e"
+
+[tasks.validate-hassfest]
+description = "Run Home Assistant's hassfest manifest validation on the local checkout"
+run = "docker run --rm -v \"${PWD}:/github/workspace\" ghcr.io/home-assistant/hassfest"
+
+[tasks.validate-hacs]
+description = "Run HACS validation (checks the repo as published on GitHub, not local files)"
+run = """
+if [ -z "${GITHUB_TOKEN}" ]; then
+  echo "Set GITHUB_TOKEN to a GitHub token (read-only public access is enough)" >&2
+  exit 1
+fi
+docker run --rm \
+  -e GITHUB_TOKEN \
+  -e INPUT_CATEGORY=integration \
+  -e INPUT_IGNORE=brands \
+  -e INPUT_REPOSITORY=tborchert/homeassistant_servicewelt \
+  -e INPUT_COMMENT=false \
+  ghcr.io/hacs/action:main
+"""
