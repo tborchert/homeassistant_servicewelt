@@ -17,3 +17,5 @@ coverage.xml
 # Home Assistant configuration
 config/*
 !config/configuration.yaml
+# e2e test container logs
+tests/e2e/logs/

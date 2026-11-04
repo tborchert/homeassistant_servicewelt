@@ -1,0 +1,21 @@
+# Minimal Home Assistant config for the end-to-end tests. default_config is
+# left out on purpose: it pulls in many integrations that slow startup and
+# are irrelevant here. onboarding/config/api are what the tests drive.
+homeassistant:
+  name: Servicewelt E2E
+  unit_system: metric
+  time_zone: UTC
+  country: DE
+
+http:
+
+api:
+
+config:
+
+onboarding:
+
+logger:
+  default: warning
+  logs:
+    custom_components.servicewelt: debug

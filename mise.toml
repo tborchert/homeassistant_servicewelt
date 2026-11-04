@@ -29,3 +29,11 @@ export PYTHONPATH="${PYTHONPATH}:${PWD}/custom_components"
 
 uv run hass --config "${PWD}/config" --debug
 """
+
+[tasks.test]
+description = "Run the unit tests"
+run = "uv run pytest"
+
+[tasks.test-e2e]
+description = "Run end-to-end tests: Home Assistant + fake Servicewelt portal in Docker"
+run = "uv run pytest tests/e2e -m e2e"

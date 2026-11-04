@@ -24,3 +24,11 @@ keep-runtime-typing = true
 
 [lint.mccabe]
 max-complexity = 25
+[lint.per-file-ignores]
+"tests/**" = [
+    "S101",    # assert is how pytest tests are written
+    "D102",    # test helpers are small and self-describing
+    "D103",    # test functions are named for what they check
+    "PLR2004", # magic values are the point of an expectation
+]
+"tests/e2e/fake_portal/*" = ["INP001"]  # standalone script copied into its own image

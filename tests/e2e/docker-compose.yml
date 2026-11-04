@@ -1,0 +1,32 @@
+# End-to-end test stack: a real Home Assistant with this integration mounted,
+# plus a fake Servicewelt portal reachable from HA at http://servicewelt
+# (the same hostname the real ISG web uses on a home network).
+name: servicewelt-e2e
+
+services:
+  servicewelt:
+    build: ./fake_portal
+    volumes:
+      - ../../sample_pages:/pages:ro
+    ports:
+      - "${PORTAL_PORT:-18080}:80"
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:${HA_VERSION:-2025.6.3}
+    depends_on:
+      servicewelt:
+        condition: service_healthy
+    volumes:
+      # Only these two paths are mounted, so the rest of /config (.storage,
+      # deps, logs) lives in the container and every `up` starts from scratch.
+      - ./ha_config/configuration.yaml:/config/configuration.yaml:ro
+      - ../../custom_components:/config/custom_components:ro
+    environment:
+      TZ: UTC
+    ports:
+      - "${HA_PORT:-18123}:8123"
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8123/manifest.json"]
+      interval: 2s
+      timeout: 2s
+      retries: 90

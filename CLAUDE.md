@@ -22,6 +22,12 @@ mise run develop
 ```
 Starts a local Home Assistant instance with the integration loaded for testing. Uses `config/` directory for HA configuration.
 
+### Tests
+```bash
+mise run test       # unit tests
+mise run test-e2e   # HA + fake portal in Docker, see CONTRIBUTING.md
+```
+
 ### Linting
 ```bash
 mise run lint
@@ -40,10 +46,9 @@ Runs ruff formatter and linter with auto-fix.
 ### Platform Support
 - **Sensors** (`sensor.py`): Numeric data entities
 - **Binary Sensors** (`binary_sensor.py`): On/off state entities  
-- **Switches** (`switch.py`): Controllable on/off entities
 
 ### Configuration
-- Update interval: 10 seconds (defined in `__init__.py:44`)
+- Update interval: 10 seconds (defined in `async_setup_entry` in `__init__.py`)
 - Domain: `servicewelt` 
 - IoT Class: `cloud_polling`
 - Config flow enabled for UI setup
