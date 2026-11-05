@@ -36,14 +36,10 @@ class ServiceweltApiClient:
 
     def __init__(
         self,
-        username: str,
-        password: str,
         session: aiohttp.ClientSession,
         host: str = DEFAULT_HOST,
     ) -> None:
         """Initialize Servicewelt API Client."""
-        self._username = username
-        self._password = password
         self._session = session
         self._base_url = host.rstrip("/")
 

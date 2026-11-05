@@ -69,7 +69,7 @@ def test_config_flow_form_defaults_to_local_portal(ha: HomeAssistant) -> None:
         assert flow["type"] == "form"
         assert flow["step_id"] == "user"
         fields = {f["name"]: f for f in flow["data_schema"]}
-        assert set(fields) == {"host", "username", "password"}
+        assert set(fields) == {"host"}
         assert fields["host"]["default"] == "http://servicewelt"
     finally:
         ha.http.delete(f"/api/config/config_entries/flow/{flow['flow_id']}")
@@ -80,7 +80,7 @@ def test_all_entities_report_sample_values(
     portal: Portal,
     entry: dict[str, Any],
 ) -> None:
-    assert entry["title"] == "heatpump"
+    assert entry["title"] == PORTAL_HOST_FOR_HA
     states = ha.servicewelt_states()
 
     assert set(states) == set(EXPECTED_SENSORS) | set(EXPECTED_BINARY_SENSORS)
@@ -106,7 +106,7 @@ def test_happy_path_logs_no_errors(ha: HomeAssistant, portal: Portal) -> None:
     flow = ha.start_flow()
     result = ha.submit_flow(
         flow["flow_id"],
-        {"host": PORTAL_HOST_FOR_HA, "username": "quiet", "password": "secret"},
+        {"host": PORTAL_HOST_FOR_HA},
     )
     assert result["type"] == "create_entry", result
     try:
@@ -199,8 +199,6 @@ def test_config_flow_reports_unreachable_portal(
             flow["flow_id"],
             {
                 "host": "http://nothing-here.invalid",
-                "username": "heatpump",
-                "password": "secret",
             },
         )
         assert result["type"] == "form"
@@ -216,7 +214,7 @@ def test_config_flow_reports_portal_error(ha: HomeAssistant, portal: Portal) -> 
     try:
         result = ha.submit_flow(
             flow["flow_id"],
-            {"host": PORTAL_HOST_FOR_HA, "username": "heatpump", "password": "secret"},
+            {"host": PORTAL_HOST_FOR_HA},
         )
         assert result["type"] == "form"
         assert result["errors"] == {"base": "connection"}
@@ -224,14 +222,14 @@ def test_config_flow_reports_portal_error(ha: HomeAssistant, portal: Portal) -> 
         ha.http.delete(f"/api/config/config_entries/flow/{flow['flow_id']}")
 
 
-def test_second_entry_for_same_user_is_rejected(
+def test_second_entry_for_same_portal_is_rejected(
     ha: HomeAssistant,
     entry: dict[str, Any],  # noqa: ARG001
 ) -> None:
     flow = ha.start_flow()
     result = ha.submit_flow(
         flow["flow_id"],
-        {"host": PORTAL_HOST_FOR_HA, "username": "heatpump", "password": "other"},
+        {"host": PORTAL_HOST_FOR_HA},
     )
     assert result["type"] == "abort"
     assert result["reason"] == "already_configured"

@@ -7,7 +7,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 
 from custom_components.servicewelt import async_setup_entry
@@ -18,10 +17,7 @@ from custom_components.servicewelt.coordinator import ServiceweltDataUpdateCoord
 def mock_config_entry():
     """Fixture for mocked config entry."""
     entry = MagicMock(spec=ConfigEntry)
-    entry.data = {
-        CONF_USERNAME: "test_user",
-        CONF_PASSWORD: "test_password",
-    }
+    entry.data = {}
     entry.domain = "servicewelt"
     entry.runtime_data = None
     entry.add_update_listener = MagicMock()

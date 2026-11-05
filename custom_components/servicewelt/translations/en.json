@@ -4,14 +4,11 @@
             "user": {
                 "description": "If you need help with the configuration, see the [documentation]({docs_url}).",
                 "data": {
-                    "host": "Portal URL",
-                    "username": "Username",
-                    "password": "Password"
+                    "host": "Portal URL"
                 }
             }
         },
         "error": {
-            "auth": "Username/Password is wrong.",
             "connection": "Unable to connect to the server.",
             "unknown": "Unknown error occurred."
         },

@@ -19,8 +19,6 @@ from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import (
     CONF_HOST,
-    CONF_PASSWORD,
-    CONF_USERNAME,
     STATE_ON,
     STATE_UNAVAILABLE,
 )
@@ -42,11 +40,7 @@ if TYPE_CHECKING:
 
 SAMPLE_PAGES = Path(__file__).parent.parent / "sample_pages"
 PAGES = ("1,0", "1,1", "1,8", "2,0", "2,2")
-ENTRY_DATA = {
-    CONF_HOST: DEFAULT_HOST,
-    CONF_USERNAME: "heatpump",
-    CONF_PASSWORD: "secret",
-}
+ENTRY_DATA = {CONF_HOST: DEFAULT_HOST}
 POLL_INTERVAL = timedelta(seconds=10)
 
 
@@ -82,7 +76,9 @@ async def entry(
     hass: HomeAssistant, aioclient_mock: AiohttpClientMocker
 ) -> MockConfigEntry:
     serve(aioclient_mock)
-    entry = MockConfigEntry(domain=DOMAIN, data=ENTRY_DATA, unique_id="heatpump")
+    entry = MockConfigEntry(
+        domain=DOMAIN, data=ENTRY_DATA, unique_id="http-servicewelt"
+    )
     entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
@@ -100,7 +96,7 @@ async def poll(hass: HomeAssistant) -> None:
 
 @pytest.mark.parametrize("page", PAGES)
 def test_parser_extracts_every_row_of_sample_page(page: str) -> None:
-    client = ServiceweltApiClient("u", "p", session=None)  # type: ignore[arg-type]
+    client = ServiceweltApiClient(session=None)  # type: ignore[arg-type]
     html = sample(page)
 
     parsed = client._parse_html_data(html)
@@ -113,7 +109,7 @@ def test_parser_extracts_every_row_of_sample_page(page: str) -> None:
 
 
 def test_parser_converts_values() -> None:
-    client = ServiceweltApiClient("u", "p", session=None)  # type: ignore[arg-type]
+    client = ServiceweltApiClient(session=None)  # type: ignore[arg-type]
 
     system = client._parse_html_data(sample("1,0"))
     heat_pump = client._parse_html_data(sample("1,1"))
@@ -256,7 +252,7 @@ async def test_config_flow_creates_entry(
     await hass.async_block_till_done()
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert result["title"] == "heatpump"
+    assert result["title"] == DEFAULT_HOST
     assert result["data"] == ENTRY_DATA
 
 
@@ -276,7 +272,7 @@ async def test_config_flow_shows_connection_error(
     assert result["errors"] == {"base": "connection"}
 
 
-async def test_config_flow_aborts_for_configured_user(
+async def test_config_flow_aborts_for_configured_portal(
     hass: HomeAssistant, entry: MockConfigEntry
 ) -> None:
     assert entry.state is ConfigEntryState.LOADED

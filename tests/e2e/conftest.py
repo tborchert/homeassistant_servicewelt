@@ -282,7 +282,7 @@ def entry(ha: HomeAssistant, portal: Portal) -> Iterator[dict[str, Any]]:  # noq
     flow = ha.start_flow()
     result = ha.submit_flow(
         flow["flow_id"],
-        {"host": PORTAL_HOST_FOR_HA, "username": "heatpump", "password": "secret"},
+        {"host": PORTAL_HOST_FOR_HA},
     )
     assert result["type"] == "create_entry", result
     entry = result["result"]
